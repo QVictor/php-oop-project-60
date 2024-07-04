@@ -73,6 +73,22 @@ class Validator
         return $this;
     }
 
+    public function positive(): static
+    {
+        $className = PositiveValidator::class;
+        $this->deleteRuleIfExist($className);
+        $this->rules[$className] = new $className();
+        return $this;
+    }
+
+    public function range($min, $max): static
+    {
+        $className = RangeValidator::class;
+        $this->deleteRuleIfExist($className);
+        $this->rules[$className] = new $className($min, $max);
+        return $this;
+    }
+
     public function isValid($value): bool
     {
         foreach ($this->rules as $rule) {
