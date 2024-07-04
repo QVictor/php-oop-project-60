@@ -29,4 +29,24 @@ class ValidatorTest extends TestCase
 
         $this->assertTrue($v->string()->minLength(10)->minLength(5)->isValid('Hexlet'));
     }
+
+    public function testValidatorPartTwo(): void
+    {
+        $v = new Validator();
+
+        $schema = $v->number();
+
+        $this->assertTrue($schema->isValid(null));
+
+        $schema->required();
+
+        $this->assertFalse($schema->isValid(null));
+        $this->assertTrue($schema->isValid(7));
+        $this->assertTrue($schema->positive()->isValid(10));
+
+        $schema->range(-5, 5);
+
+        $this->assertFalse($schema->isValid(-3));
+        $this->assertTrue($schema->isValid(5));
+    }
 }
