@@ -2,6 +2,7 @@
 
 namespace App\Validators;
 
+use App\Validators\ArrayValidators\SizeOfValidator;
 use App\Validators\NumberValidators\PositiveValidator;
 use App\Validators\NumberValidators\RangeValidator;
 
@@ -12,6 +13,7 @@ class Validator
     public mixed $type_validation;
     public const string TYPE_VALIDATION_STRING = 'string';
     public const string TYPE_VALIDATION_NUMBER = 'number';
+    public const string TYPE_VALIDATION_ARRAY = 'array';
 
 //    public const array RULES = [
 //        self::REQUIRED => RequiredValidator::class,
@@ -39,6 +41,11 @@ class Validator
     public function number(): static
     {
         return new Validator(self::TYPE_VALIDATION_NUMBER);
+    }
+
+    public function array(): static
+    {
+        return new Validator(self::TYPE_VALIDATION_ARRAY);
     }
 
     private function deleteRuleIfExist($className): void
@@ -89,10 +96,18 @@ class Validator
         return $this;
     }
 
+    public function sizeof($arrayLength): static
+    {
+        $className = SizeOfValidator::class;
+        $this->deleteRuleIfExist($className);
+        $this->rules[$className] = new $className($arrayLength);
+        return $this;
+    }
+
     public function isValid($value): bool
     {
         foreach ($this->rules as $rule) {
-            if ($rule->isValid($value) === false) {
+            if ($rule->isValid($value, $this->type_validation) === false) {
                 return false;
             }
         }
