@@ -16,4 +16,17 @@ class RequiredValidatorTest extends TestCase
         $this->assertFalse($schema->isValid(''));
         $this->assertTrue($schema->isValid('test'));
     }
+
+    public function testRequiredArray()
+    {
+        $v = new Validator();
+
+        $schema = $v->array();
+        $this->assertTrue($schema->isValid(null));
+
+        $schema = $schema->required();
+
+        $this->assertTrue($schema->isValid([]));
+        $this->assertTrue($schema->isValid(['hexlet']));
+    }
 }
