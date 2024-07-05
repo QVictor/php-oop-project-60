@@ -8,6 +8,6 @@ class PositiveValidator implements ValidatorInterface
 {
     public function isValid($value): bool
     {
-        return $value > 0;
+        return is_null($value) || $value > 0;
     }
 }

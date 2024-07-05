@@ -2,6 +2,7 @@
 
 namespace App\Validators;
 
+use App\Validators\ArrayValidators\ShapeValidator;
 use App\Validators\ArrayValidators\SizeOfValidator;
 use App\Validators\NumberValidators\PositiveValidator;
 use App\Validators\NumberValidators\RangeValidator;
@@ -35,7 +36,7 @@ class Validator
 
     public function string(): static
     {
-        return new Validator();
+        return new Validator(self::TYPE_VALIDATION_STRING);
     }
 
     public function number(): static
@@ -101,6 +102,14 @@ class Validator
         $className = SizeOfValidator::class;
         $this->deleteRuleIfExist($className);
         $this->rules[$className] = new $className($arrayLength);
+        return $this;
+    }
+
+    public function shape($arrayWithRules): static
+    {
+        $className = ShapeValidator::class;
+        $this->deleteRuleIfExist($className);
+        $this->rules[$className] = new $className($arrayWithRules);
         return $this;
     }
 
