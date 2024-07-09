@@ -138,6 +138,21 @@ class Validator
         return $this;
     }
 
+    public function addValidator($type, $name, $fn)
+    {
+        $this->rules[$name] = new Check($fn);
+        return $this;
+    }
+
+    public function test($checkName, $value)
+    {
+        if (isset($this->rules[$checkName])) {
+            $this->checks[$checkName] = $this->rules[$checkName];
+            $this->checks[$checkName]->setArg($value);
+        }
+        return $this;
+    }
+
     public function isValid($value): bool
     {
         foreach ($this->checks as $nameFunction => $function) {
