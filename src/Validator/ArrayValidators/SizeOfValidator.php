@@ -6,15 +6,8 @@ use Hexlet\Validator\ValidatorInterface;
 
 class SizeOfValidator implements ValidatorInterface
 {
-    private $arrayLength;
-
-    public function __construct($arrayLength)
+    public static function getFunction(): \Closure
     {
-        $this->arrayLength = $arrayLength;
-    }
-
-    public function isValid($value): bool
-    {
-        return count($value) === $this->arrayLength;
+        return fn($value, $arrayLength) => count($value) === $arrayLength;
     }
 }

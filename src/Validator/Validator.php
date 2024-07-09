@@ -40,32 +40,13 @@ class Validator
             $this->rules = $oldRules;
         } else {
             $this->rules = [
-                'required' => function ($value, $type_validation) {
-                    switch ($type_validation) {
-                        case Validator::TYPE_VALIDATION_STRING:
-                            return !empty($value);
-                        case Validator::TYPE_VALIDATION_NUMBER:
-                            return is_int(value: $value);
-                        case Validator::TYPE_VALIDATION_ARRAY:
-                            return is_array(value: $value);
-                    }
-                },
-                'minLength' => fn($value, $minLength) => strlen($value) >= $minLength,
-                'contains' => fn($value, $substring) => str_contains($value, $substring),
-                'positive' => fn($value) => is_null($value) || $value > 0,
-                'range' => fn($value, $arr) => $value >= $arr['min'] && $value <= $arr['max'],
-                'sizeof' => fn($value, $arrayLength) => count($value) === $arrayLength,
-                'shape' => function ($value, $arrayWithRules) {
-                    foreach ($value as $key => $item) {
-                        if (array_key_exists($key, $arrayWithRules)) {
-                            $validator = $arrayWithRules[$key];
-                            if (!$validator->isValid($item)) {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                }
+                'required' => RequiredValidator::getFunction(),
+                'minLength' => MinLengthValidator::getFunction(),
+                'contains' => ContainsValidator::getFunction(),
+                'positive' => PositiveValidator::getFunction(),
+                'range' => RangeValidator::getFunction(),
+                'sizeof' => SizeOfValidator::getFunction(),
+                'shape' => ShapeValidator::getFunction()
             ];
         }
 
@@ -155,7 +136,7 @@ class Validator
 
     public function isValid($value): bool
     {
-        foreach ($this->checks as $nameFunction => $function) {
+        foreach ($this->checks as $function) {
             if (!$function->run($value)) {
                 return false;
             }

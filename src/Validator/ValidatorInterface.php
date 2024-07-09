@@ -4,5 +4,5 @@ namespace Hexlet\Validator;
 
 interface ValidatorInterface
 {
-    public function isValid(string $value);
+    public static function getFunction(): \Closure;
 }

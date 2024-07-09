@@ -6,17 +6,8 @@ use Hexlet\Validator\ValidatorInterface;
 
 class RangeValidator
 {
-    private $min;
-    private $max;
-
-    public function __construct($min, $max)
+    public static function getFunction(): \Closure
     {
-        $this->min = $min;
-        $this->max = $max;
-    }
-
-    public function isValid($value): bool
-    {
-        return $value >= $this->min && $value <= $this->max;
+        return fn($value, $arr) => $value >= $arr['min'] && $value <= $arr['max'];
     }
 }

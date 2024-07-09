@@ -6,8 +6,8 @@ use Hexlet\Validator\ValidatorInterface;
 
 class PositiveValidator implements ValidatorInterface
 {
-    public function isValid($value): bool
+    public static function getFunction(): \Closure
     {
-        return is_null($value) || $value > 0;
+        return fn($value) => is_null($value) || $value > 0;
     }
 }
