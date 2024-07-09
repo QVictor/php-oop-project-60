@@ -33,53 +33,59 @@ class Validator
 //    public const string POSITIVE = 'positive';
 //    public const string RANGE = 'range';
 
-    public function __construct($type_validation = self::TYPE_VALIDATION_STRING)
+    //TODO переписать oldRules!!!
+    public function __construct($type_validation = self::TYPE_VALIDATION_STRING, $oldRules = [])
     {
-        $this->rules = [
-            'required' => function ($value, $type_validation) {
-                switch ($type_validation) {
-                    case Validator::TYPE_VALIDATION_STRING:
-                        return !empty($value);
-                    case Validator::TYPE_VALIDATION_NUMBER:
-                        return is_int(value: $value);
-                    case Validator::TYPE_VALIDATION_ARRAY:
-                        return is_array(value: $value);
-                }
-            },
-            'minLength' => fn($value, $minLength) => strlen($value) >= $minLength,
-            'contains' => fn($value, $substring) => str_contains($value, $substring),
-            'positive' => fn($value) => is_null($value) || $value > 0,
-            'range' => fn($value, $arr) => $value >= $arr['min'] && $value <= $arr['max'],
-            'sizeof' => fn($value, $arrayLength) => count($value) === $arrayLength,
-            'shape' => function ($value, $arrayWithRules) {
-                foreach ($value as $key => $item) {
-                    if (array_key_exists($key, $arrayWithRules)) {
-                        $validator = $arrayWithRules[$key];
-                        if (!$validator->isValid($item)) {
-                            return false;
+        if ($oldRules != []) {
+            $this->rules = $oldRules;
+        } else {
+            $this->rules = [
+                'required' => function ($value, $type_validation) {
+                    switch ($type_validation) {
+                        case Validator::TYPE_VALIDATION_STRING:
+                            return !empty($value);
+                        case Validator::TYPE_VALIDATION_NUMBER:
+                            return is_int(value: $value);
+                        case Validator::TYPE_VALIDATION_ARRAY:
+                            return is_array(value: $value);
+                    }
+                },
+                'minLength' => fn($value, $minLength) => strlen($value) >= $minLength,
+                'contains' => fn($value, $substring) => str_contains($value, $substring),
+                'positive' => fn($value) => is_null($value) || $value > 0,
+                'range' => fn($value, $arr) => $value >= $arr['min'] && $value <= $arr['max'],
+                'sizeof' => fn($value, $arrayLength) => count($value) === $arrayLength,
+                'shape' => function ($value, $arrayWithRules) {
+                    foreach ($value as $key => $item) {
+                        if (array_key_exists($key, $arrayWithRules)) {
+                            $validator = $arrayWithRules[$key];
+                            if (!$validator->isValid($item)) {
+                                return false;
+                            }
                         }
                     }
+                    return true;
                 }
-                return true;
-            }
-        ];
+            ];
+        }
+
         $this->is_require = false;
         $this->type_validation = $type_validation;
     }
 
     public function string(): static
     {
-        return new Validator(self::TYPE_VALIDATION_STRING);
+        return new Validator(self::TYPE_VALIDATION_STRING, $this->rules);
     }
 
     public function number(): static
     {
-        return new Validator(self::TYPE_VALIDATION_NUMBER);
+        return new Validator(self::TYPE_VALIDATION_NUMBER, $this->rules);
     }
 
     public function array(): static
     {
-        return new Validator(self::TYPE_VALIDATION_ARRAY);
+        return new Validator(self::TYPE_VALIDATION_ARRAY, $this->rules);
     }
 
     private function deleteRuleIfExist($className): void
