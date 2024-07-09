@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Validators;
+namespace Hexlet\Validator;
 
-use App\Validators\ArrayValidators\ShapeValidator;
-use App\Validators\ArrayValidators\SizeOfValidator;
-use App\Validators\NumberValidators\PositiveValidator;
-use App\Validators\NumberValidators\RangeValidator;
-use App\Check;
+use Hexlet\Validator\ArrayValidators\ShapeValidator;
+use Hexlet\Validator\ArrayValidators\SizeOfValidator;
+use Hexlet\Validator\NumberValidators\PositiveValidator;
+use Hexlet\Validator\NumberValidators\RangeValidator;
+use Hexlet\Check;
 
 class Validator
 {

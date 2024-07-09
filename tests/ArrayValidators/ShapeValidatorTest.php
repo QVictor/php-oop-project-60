@@ -2,7 +2,7 @@
 
 namespace Php\Package\Tests\ArrayValidators;
 
-use App\Validators\Validator;
+use Hexlet\Validator\Validator;
 use PHPUnit\Framework\TestCase;
 
 class ShapeValidatorTest extends TestCase

@@ -2,7 +2,7 @@
 
 namespace Php\Package\Tests\NumberValidators;
 
-use App\Validators\Validator;
+use Hexlet\Validator\Validator;
 use PHPUnit\Framework\TestCase;
 
 class RangeValidatorTest extends TestCase

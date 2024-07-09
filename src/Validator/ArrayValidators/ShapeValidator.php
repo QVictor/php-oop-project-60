@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Validators\ArrayValidators;
+namespace Hexlet\Validator\ArrayValidators;
 
-use App\Validators\ValidatorInterface;
+use Hexlet\Validator\ValidatorInterface;
 
 class ShapeValidator implements ValidatorInterface
 {

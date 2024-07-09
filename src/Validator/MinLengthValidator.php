@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Validators;
+namespace Hexlet\Validator;
 
 class MinLengthValidator implements ValidatorInterface
 {

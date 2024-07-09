@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Validators\NumberValidators;
+namespace Hexlet\Validator\NumberValidators;
 
-use App\Validators\ValidatorInterface;
+use Hexlet\Validator\ValidatorInterface;
 
 class RangeValidator
 {
