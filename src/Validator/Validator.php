@@ -10,9 +10,9 @@ use Hexlet\Check;
 
 class Validator
 {
-    public array $rules = [];
+    public array $validators = [];
     public array $checks = [];
-    public bool $is_require;
+    public bool $requiredValue = false;
 
     public mixed $type_validation;
     public const string REQUIRED = 'required';
@@ -37,9 +37,9 @@ class Validator
     public function __construct($type_validation = self::TYPE_VALIDATION_STRING, $oldRules = [])
     {
         if ($oldRules != []) {
-            $this->rules = $oldRules;
+            $this->validators = $oldRules;
         } else {
-            $this->rules = [
+            $this->validators = [
                 'required' => RequiredValidator::getFunction(),
                 'minLength' => MinLengthValidator::getFunction(),
                 'contains' => ContainsValidator::getFunction(),
@@ -50,86 +50,87 @@ class Validator
             ];
         }
 
-        $this->is_require = false;
         $this->type_validation = $type_validation;
     }
 
     public function string(): static
     {
-        return new Validator(self::TYPE_VALIDATION_STRING, $this->rules);
+        return new Validator(self::TYPE_VALIDATION_STRING, $this->validators);
     }
 
     public function number(): static
     {
-        return new Validator(self::TYPE_VALIDATION_NUMBER, $this->rules);
+        return new Validator(self::TYPE_VALIDATION_NUMBER, $this->validators);
     }
 
     public function array(): static
     {
-        return new Validator(self::TYPE_VALIDATION_ARRAY, $this->rules);
+        return new Validator(self::TYPE_VALIDATION_ARRAY, $this->validators);
     }
 
     private function deleteRuleIfExist($className): void
     {
-        if (isset($this->rules[$className])) {
-            unset($this->rules[$className]);
+        if (isset($this->validators[$className])) {
+            unset($this->validators[$className]);
         }
     }
 
+    //TODO вынести Checks в отдельный класс (фабрика?)
     public function required(): static
     {
-        $this->checks[self::REQUIRED] = new Check($this->rules[self::REQUIRED], $this->type_validation);
+        $this->checks[self::REQUIRED] = new Check($this->validators[self::REQUIRED], $this->type_validation);
+        $this->requiredValue = true;
 
         return $this;
     }
 
     public function contains($substring): static
     {
-        $this->checks['contains'] = new Check($this->rules['contains'], $substring);
+        $this->checks['contains'] = new Check($this->validators['contains'], $substring);
         return $this;
     }
 
     public function minLength($minLength): static
     {
-        $this->checks['minLength'] = new Check($this->rules['minLength'], $minLength);
+        $this->checks['minLength'] = new Check($this->validators['minLength'], $minLength);
         return $this;
     }
 
     public function positive(): static
     {
-        $this->checks['positive'] = new Check($this->rules['positive']);
+        $this->checks['positive'] = new Check($this->validators['positive']);
         return $this;
     }
 
     public function range($min, $max): static
     {
-        $this->checks['range'] = new Check($this->rules['range'], ['min' => $min, 'max' => $max]);
+        $this->checks['range'] = new Check($this->validators['range'], ['min' => $min, 'max' => $max]);
         return $this;
     }
 
     public function sizeof($arrayLength): static
     {
-        $this->checks['sizeof'] = new Check($this->rules['sizeof'], $arrayLength);
+        $this->checks['sizeof'] = new Check($this->validators['sizeof'], $arrayLength);
         return $this;
     }
 
     public function shape($arrayWithRules): static
     {
-        $this->checks['shape'] = new Check($this->rules['shape'], $arrayWithRules);
+        $this->checks['shape'] = new Check($this->validators['shape'], $arrayWithRules);
         return $this;
     }
 
     public function addValidator($type, $name, $fn)
     {
-        $this->rules[$name] = new Check($fn);
+        $this->validators[$name] = new Check($fn);
         return $this;
     }
 
-    public function test($checkName, $value)
+    public function test($userFunctionName, $value)
     {
-        if (isset($this->rules[$checkName])) {
-            $this->checks[$checkName] = $this->rules[$checkName];
-            $this->checks[$checkName]->setArg($value);
+        if (isset($this->validators[$userFunctionName])) {
+            $this->checks[$userFunctionName] = $this->validators[$userFunctionName];
+            $this->checks[$userFunctionName]->setArg($value);
         }
         return $this;
     }
