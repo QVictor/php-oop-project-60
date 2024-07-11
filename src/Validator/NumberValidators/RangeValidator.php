@@ -2,8 +2,6 @@
 
 namespace Hexlet\Validator\NumberValidators;
 
-use Hexlet\Validator\ValidatorInterface;
-
 class RangeValidator
 {
     public static function getFunction(): \Closure

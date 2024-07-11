@@ -1,6 +1,6 @@
 <?php
 
-namespace Hexlet\Validator;
+namespace Hexlet\Interfaces;
 
 interface ValidatorInterface
 {

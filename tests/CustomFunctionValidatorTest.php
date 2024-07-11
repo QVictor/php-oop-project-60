@@ -5,13 +5,14 @@ namespace Php\Package\Tests;
 use Hexlet\Validator\Validator;
 use PHPUnit\Framework\TestCase;
 
-class CustomFunctionValidator extends TestCase
+class CustomFunctionValidatorTest extends TestCase
 {
     public function testRequiredValidator(): void
     {
         $v = new Validator();
 
         $fn = fn($value, $start) => str_starts_with($value, $start);
+
         // Метод добавления новых валидаторов
         $v->addValidator('string', 'startWith', $fn);
 

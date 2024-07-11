@@ -2,7 +2,7 @@
 
 namespace Hexlet\Validator\ArrayValidators;
 
-use Hexlet\Validator\ValidatorInterface;
+use Hexlet\Interfaces\ValidatorInterface;
 
 class SizeOfValidator implements ValidatorInterface
 {

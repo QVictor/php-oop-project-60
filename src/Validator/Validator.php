@@ -2,16 +2,17 @@
 
 namespace Hexlet\Validator;
 
+use Hexlet\Factories\CheckFactory;
 use Hexlet\Factories\ValidatorFactory;
 use Hexlet\Validator\ArrayValidators\ShapeValidator;
 use Hexlet\Validator\ArrayValidators\SizeOfValidator;
 use Hexlet\Validator\NumberValidators\PositiveValidator;
 use Hexlet\Validator\NumberValidators\RangeValidator;
-use Hexlet\Check;
 
 class Validator
 {
     use ValidatorFactory;
+    use CheckFactory;
 
     public array $validators = [];
     public array $checks = [];
@@ -40,7 +41,7 @@ class Validator
     public const string TYPE_VALIDATION_NUMBER = 'number';
     public const string TYPE_VALIDATION_ARRAY = 'array';
 
-    public function __construct($type_validation = self::TYPE_VALIDATION_STRING, $validators = [])
+    public function __construct(string $type_validation = self::TYPE_VALIDATION_STRING, array $validators = [])
     {
         if ($validators != []) {
             $this->validators = $validators;
@@ -64,12 +65,12 @@ class Validator
         return $this->addToChecks(self::REQUIRED,$this->validators[self::REQUIRED], $this->type_validation);
     }
 
-    public function contains($substring): static
+    public function contains(string $substring): static
     {
         return $this->addToChecks(self::CONTAINS,$this->validators[self::CONTAINS], $substring);
     }
 
-    public function minLength($minLength): static
+    public function minLength(string$minLength): static
     {
         return $this->addToChecks(self::MIN_LENGTH,$this->validators[self::MIN_LENGTH], $minLength);
     }
@@ -79,48 +80,43 @@ class Validator
         return $this->addToChecks(self::POSITIVE,$this->validators[self::POSITIVE]);
     }
 
-    public function range($min, $max): static
+    public function range(int $min, int $max): static
     {
         return $this->addToChecks(self::RANGE,$this->validators[self::RANGE],['min' => $min, 'max' => $max]);
     }
 
-    public function sizeof($arrayLength): static
+    public function sizeof(int $arrayLength): static
     {
         return $this->addToChecks(self::SIZE_OF,$this->validators[self::SIZE_OF],$arrayLength);
     }
 
-    public function shape($arrayWithRules): static
+    public function shape(array $validateRules): static
     {
-        return $this->addToChecks(self::SHAPE,$this->validators[self::SHAPE],$arrayWithRules);
+        return $this->addToChecks(self::SHAPE,$this->validators[self::SHAPE],$validateRules);
     }
 
-    protected function addToChecks($validationName, $validationFunction, $args = []): static
+    protected function addToChecks(string $validationName, object $validationFunction, int|string|array $args = []): static
     {
-        $this->checks[$validationName] = $this->checkFactory($validationFunction, $args);
+        $this->checks[$validationName] = $this->createCheck($validationFunction, $args);
         return $this;
     }
 
-    protected function checkFactory($validationFunction, $args = []): Check
+    public function addValidator($type, string $name, object $fn): static
     {
-        return new Check($validationFunction, $args);
-    }
-
-    public function addValidator($type, $name, $fn)
-    {
-        $this->validators[$name] = new Check($fn);
+        $this->validators[$name] = $this->createCheck($fn);
         return $this;
     }
 
-    public function test($userFunctionName, $value)
+    public function test(string $customFunctionName, int|string $value): static
     {
-        if (isset($this->validators[$userFunctionName])) {
-            $this->checks[$userFunctionName] = $this->validators[$userFunctionName];
-            $this->checks[$userFunctionName]->setArg($value);
+        if (isset($this->validators[$customFunctionName])) {
+            $this->checks[$customFunctionName] = $this->validators[$customFunctionName];
+            $this->checks[$customFunctionName]->setArg($value);
         }
         return $this;
     }
 
-    public function isValid($value): bool
+    public function isValid(null|int|string|array $value): bool
     {
         foreach ($this->checks as $function) {
             if (!$function->run($value)) {

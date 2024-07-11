@@ -6,18 +6,18 @@ use Hexlet\Validator\Validator;
 
 trait ValidatorFactory
 {
-    public function string($validators = []): Validator
+    public function string(): Validator
     {
-        return new Validator(Validator::TYPE_VALIDATION_STRING, $validators);
+        return new Validator(Validator::TYPE_VALIDATION_STRING, $this->validators);
     }
 
-    public function number($validators = []): Validator
+    public function number(): Validator
     {
-        return new Validator(Validator::TYPE_VALIDATION_NUMBER, $validators);
+        return new Validator(Validator::TYPE_VALIDATION_NUMBER, $this->validators);
     }
 
-    public function array($validators = []): Validator
+    public function array(): Validator
     {
-        return new Validator(Validator::TYPE_VALIDATION_ARRAY, $validators);
+        return new Validator(Validator::TYPE_VALIDATION_ARRAY, $this->validators);
     }
 }

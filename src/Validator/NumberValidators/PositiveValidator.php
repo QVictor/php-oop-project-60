@@ -2,7 +2,7 @@
 
 namespace Hexlet\Validator\NumberValidators;
 
-use Hexlet\Validator\ValidatorInterface;
+use Hexlet\Interfaces\ValidatorInterface;
 
 class PositiveValidator implements ValidatorInterface
 {
