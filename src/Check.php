@@ -4,12 +4,12 @@ namespace Hexlet;
 
 class Check
 {
-    public $validate;
+    public $checkFunction;
     public $arg;
 
-    public function __construct($validate, $arg = [])
+    public function __construct($checkFunction, $arg = [])
     {
-        $this->validate = $validate;
+        $this->checkFunction = $checkFunction;
         $this->arg = $arg;
     }
 
@@ -20,6 +20,6 @@ class Check
 
     public function run($value)
     {
-        return ($this->validate)($value, $this->arg);
+        return ($this->checkFunction)($value, $this->arg);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Hexlet\Validator;
 
+use Hexlet\Factories\ValidatorFactory;
 use Hexlet\Validator\ArrayValidators\ShapeValidator;
 use Hexlet\Validator\ArrayValidators\SizeOfValidator;
 use Hexlet\Validator\NumberValidators\PositiveValidator;
@@ -15,109 +16,105 @@ class Validator
     public bool $requiredValue = false;
 
     public mixed $type_validation;
-    public const string REQUIRED = 'required';
-    public const string TYPE_VALIDATION_STRING = 'string';
-    public const string TYPE_VALIDATION_NUMBER = 'number';
-    public const string TYPE_VALIDATION_ARRAY = 'array';
 
-//    public const array RULES = [
-//        self::REQUIRED => RequiredValidator::class,
-//        self::CONTAINS => ContainsValidator::class,
-//        self::MIN_LENGTH => MinLengthValidator::class,
-//        self::POSITIVE => PositiveValidator::class,
-//        self::RANGE => PositiveValidator::class
-//    ];
-//    public const string REQUIRED = 'required';
-//    public const string CONTAINS = 'contains';
-//    public const string MIN_LENGTH = 'minLength';
-//    public const string POSITIVE = 'positive';
-//    public const string RANGE = 'range';
+    public const array VALIDATORS_CLASSES = [
+        self::REQUIRED => RequiredValidator::class,
+        self::CONTAINS => ContainsValidator::class,
+        self::MIN_LENGTH => MinLengthValidator::class,
+        self::POSITIVE => PositiveValidator::class,
+        self::RANGE => RangeValidator::class,
+        self::SIZE_OF => SizeOfValidator::class,
+        self::SHAPE => ShapeValidator::class,
+    ];
+
+    public const string REQUIRED = 'required';
+    public const string CONTAINS = 'contains';
+    public const string MIN_LENGTH = 'minLength';
+    public const string POSITIVE = 'positive';
+    public const string RANGE = 'range';
+    public const string SIZE_OF = 'sizeof';
+    public const string SHAPE = 'shape';
 
     //TODO переписать oldRules!!!
-    public function __construct($type_validation = self::TYPE_VALIDATION_STRING, $oldRules = [])
+    public function __construct($type_validation = ValidatorFactory::STRING, $validators = [])
     {
-        if ($oldRules != []) {
-            $this->validators = $oldRules;
+        if ($validators != []) {
+            $this->validators = $validators;
         } else {
-            $this->validators = [
-                'required' => RequiredValidator::getFunction(),
-                'minLength' => MinLengthValidator::getFunction(),
-                'contains' => ContainsValidator::getFunction(),
-                'positive' => PositiveValidator::getFunction(),
-                'range' => RangeValidator::getFunction(),
-                'sizeof' => SizeOfValidator::getFunction(),
-                'shape' => ShapeValidator::getFunction()
-            ];
+            $this->setValidatorsDefault();
         }
 
         $this->type_validation = $type_validation;
     }
 
+    public function setValidatorsDefault(): void
+    {
+        foreach (self::VALIDATORS_CLASSES as $validatorName => $validatorClass) {
+            $this->validators[$validatorName] = $validatorClass::getFunction();
+        }
+    }
+
     public function string(): static
     {
-        return new Validator(self::TYPE_VALIDATION_STRING, $this->validators);
+        return ValidatorFactory::string($this->validators);
+//        return new Validator(self::TYPE_VALIDATION_STRING, $this->validators);
     }
 
     public function number(): static
     {
-        return new Validator(self::TYPE_VALIDATION_NUMBER, $this->validators);
+        return ValidatorFactory::number($this->validators);
     }
 
     public function array(): static
     {
-        return new Validator(self::TYPE_VALIDATION_ARRAY, $this->validators);
+        return ValidatorFactory::array($this->validators);
     }
 
-    private function deleteRuleIfExist($className): void
-    {
-        if (isset($this->validators[$className])) {
-            unset($this->validators[$className]);
-        }
-    }
-
-    //TODO вынести Checks в отдельный класс (фабрика?)
     public function required(): static
     {
-        $this->checks[self::REQUIRED] = new Check($this->validators[self::REQUIRED], $this->type_validation);
         $this->requiredValue = true;
-
-        return $this;
+        return $this->addToChecks(self::REQUIRED,$this->validators[self::REQUIRED], $this->type_validation);
     }
 
     public function contains($substring): static
     {
-        $this->checks['contains'] = new Check($this->validators['contains'], $substring);
-        return $this;
+        return $this->addToChecks(self::CONTAINS,$this->validators[self::CONTAINS], $substring);
     }
 
     public function minLength($minLength): static
     {
-        $this->checks['minLength'] = new Check($this->validators['minLength'], $minLength);
-        return $this;
+        return $this->addToChecks(self::MIN_LENGTH,$this->validators[self::MIN_LENGTH], $minLength);
     }
 
     public function positive(): static
     {
-        $this->checks['positive'] = new Check($this->validators['positive']);
-        return $this;
+        return $this->addToChecks(self::POSITIVE,$this->validators[self::POSITIVE]);
     }
 
     public function range($min, $max): static
     {
-        $this->checks['range'] = new Check($this->validators['range'], ['min' => $min, 'max' => $max]);
-        return $this;
+        return $this->addToChecks(self::RANGE,$this->validators[self::RANGE],['min' => $min, 'max' => $max]);
     }
 
     public function sizeof($arrayLength): static
     {
-        $this->checks['sizeof'] = new Check($this->validators['sizeof'], $arrayLength);
-        return $this;
+        return $this->addToChecks(self::SIZE_OF,$this->validators[self::SIZE_OF],$arrayLength);
     }
 
     public function shape($arrayWithRules): static
     {
-        $this->checks['shape'] = new Check($this->validators['shape'], $arrayWithRules);
+        return $this->addToChecks(self::SHAPE,$this->validators[self::SHAPE],$arrayWithRules);
+    }
+
+    protected function addToChecks($validationName, $validationFunction, $args = []): static
+    {
+        $this->checks[$validationName] = $this->checkFactory($validationFunction, $args);
         return $this;
+    }
+
+    protected function checkFactory($validationFunction, $args = []): Check
+    {
+        return new Check($validationFunction, $args);
     }
 
     public function addValidator($type, $name, $fn)
