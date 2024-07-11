@@ -11,11 +11,11 @@ use Hexlet\Check;
 
 class Validator
 {
+    use ValidatorFactory;
+
     public array $validators = [];
     public array $checks = [];
     public bool $requiredValue = false;
-
-    public mixed $type_validation;
 
     public const array VALIDATORS_CLASSES = [
         self::REQUIRED => RequiredValidator::class,
@@ -35,8 +35,12 @@ class Validator
     public const string SIZE_OF = 'sizeof';
     public const string SHAPE = 'shape';
 
-    //TODO переписать oldRules!!!
-    public function __construct($type_validation = ValidatorFactory::STRING, $validators = [])
+    public string $type_validation;
+    public const string TYPE_VALIDATION_STRING = 'string';
+    public const string TYPE_VALIDATION_NUMBER = 'number';
+    public const string TYPE_VALIDATION_ARRAY = 'array';
+
+    public function __construct($type_validation = self::TYPE_VALIDATION_STRING, $validators = [])
     {
         if ($validators != []) {
             $this->validators = $validators;
@@ -52,22 +56,6 @@ class Validator
         foreach (self::VALIDATORS_CLASSES as $validatorName => $validatorClass) {
             $this->validators[$validatorName] = $validatorClass::getFunction();
         }
-    }
-
-    public function string(): static
-    {
-        return ValidatorFactory::string($this->validators);
-//        return new Validator(self::TYPE_VALIDATION_STRING, $this->validators);
-    }
-
-    public function number(): static
-    {
-        return ValidatorFactory::number($this->validators);
-    }
-
-    public function array(): static
-    {
-        return ValidatorFactory::array($this->validators);
     }
 
     public function required(): static

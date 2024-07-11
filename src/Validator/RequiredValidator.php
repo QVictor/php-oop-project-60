@@ -2,19 +2,17 @@
 
 namespace Hexlet\Validator;
 
-use Hexlet\Factories\ValidatorFactory;
-
 class RequiredValidator implements ValidatorInterface
 {
     public static function getFunction(): \Closure
     {
         return function ($value, $type_validation) {
             switch ($type_validation) {
-                case ValidatorFactory::STRING:
+                case Validator::TYPE_VALIDATION_STRING:
                     return !is_null($value) && $value !== '';
-                case ValidatorFactory::NUMBER:
+                case Validator::TYPE_VALIDATION_NUMBER:
                     return is_int(value: $value);
-                case ValidatorFactory::ARRAY:
+                case Validator::TYPE_VALIDATION_ARRAY:
                     return is_array(value: $value);
             }
         };

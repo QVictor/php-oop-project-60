@@ -4,25 +4,20 @@ namespace Hexlet\Factories;
 
 use Hexlet\Validator\Validator;
 
-class ValidatorFactory
+trait ValidatorFactory
 {
-
-    public const string STRING = 'string';
-    public const string NUMBER = 'number';
-    public const string ARRAY = 'array';
-
-    public static function string($validators = []): Validator
+    public function string($validators = []): Validator
     {
-        return new Validator(self::STRING, $validators);
+        return new Validator(Validator::TYPE_VALIDATION_STRING, $validators);
     }
 
-    public static function number($validators = []): Validator
+    public function number($validators = []): Validator
     {
-        return new Validator(self::NUMBER, $validators);
+        return new Validator(Validator::TYPE_VALIDATION_NUMBER, $validators);
     }
 
-    public static function array($validators = []): Validator
+    public function array($validators = []): Validator
     {
-        return new Validator(self::ARRAY, $validators);
+        return new Validator(Validator::TYPE_VALIDATION_ARRAY, $validators);
     }
 }
