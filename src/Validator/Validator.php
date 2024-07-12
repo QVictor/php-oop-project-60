@@ -62,37 +62,37 @@ class Validator
     public function required(): static
     {
         $this->requiredValue = true;
-        return $this->addToChecks(self::REQUIRED,$this->validators[self::REQUIRED], $this->type_validation);
+        return $this->addToChecks(self::REQUIRED, $this->validators[self::REQUIRED], $this->type_validation);
     }
 
     public function contains(string $substring): static
     {
-        return $this->addToChecks(self::CONTAINS,$this->validators[self::CONTAINS], $substring);
+        return $this->addToChecks(self::CONTAINS, $this->validators[self::CONTAINS], $substring);
     }
 
-    public function minLength(string$minLength): static
+    public function minLength(string $minLength): static
     {
-        return $this->addToChecks(self::MIN_LENGTH,$this->validators[self::MIN_LENGTH], $minLength);
+        return $this->addToChecks(self::MIN_LENGTH, $this->validators[self::MIN_LENGTH], $minLength);
     }
 
     public function positive(): static
     {
-        return $this->addToChecks(self::POSITIVE,$this->validators[self::POSITIVE]);
+        return $this->addToChecks(self::POSITIVE, $this->validators[self::POSITIVE]);
     }
 
     public function range(int $min, int $max): static
     {
-        return $this->addToChecks(self::RANGE,$this->validators[self::RANGE],['min' => $min, 'max' => $max]);
+        return $this->addToChecks(self::RANGE, $this->validators[self::RANGE], ['min' => $min, 'max' => $max]);
     }
 
     public function sizeof(int $arrayLength): static
     {
-        return $this->addToChecks(self::SIZE_OF,$this->validators[self::SIZE_OF],$arrayLength);
+        return $this->addToChecks(self::SIZE_OF, $this->validators[self::SIZE_OF], $arrayLength);
     }
 
     public function shape(array $validateRules): static
     {
-        return $this->addToChecks(self::SHAPE,$this->validators[self::SHAPE],$validateRules);
+        return $this->addToChecks(self::SHAPE, $this->validators[self::SHAPE], $validateRules);
     }
 
     protected function addToChecks(string $validationName, object $validationFunction, int|string|array $args = []): static
