@@ -18,8 +18,8 @@ class Check
         $this->arg = $arg;
     }
 
-    public function run(null|int|string|array $value)
+    public function run(null|int|string|array $value): bool
     {
-        return ($this->checkFunction)($value, $this->arg);
+        return is_callable($this->checkFunction) ? ($this->checkFunction)($value, $this->arg) : false;
     }
 }

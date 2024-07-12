@@ -101,7 +101,7 @@ class Validator
         return $this;
     }
 
-    public function addValidator($type, string $name, object $fn): static
+    public function addValidator(string $type, string $name, object $fn): static
     {
         $this->validators[$name] = $this->createCheck($fn);
         return $this;
